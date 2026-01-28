@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#c2742f">
+    <title>Spiritual Diary — Paramahansa Yogananda</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🙏</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- ========== MAIN VIEW ========== -->
+    <div id="main-view" class="view active">
+        <!-- Header -->
+        <header class="app-header">
+            <button id="music-toggle" class="header-btn" aria-label="Toggle music" title="Toggle ambient sound">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path id="music-icon-on" d="M9 18V5l12-2v13M9 18c0 1.657-1.343 3-3 3s-3-1.343-3-3 1.343-3 3-3 3 1.343 3 3zm12-2c0 1.657-1.343 3-3 3s-3-1.343-3-3 1.343-3 3-3 3 1.343 3 3z"/>
+                    <line id="music-icon-off" x1="1" y1="1" x2="23" y2="23" style="display:none"/>
+                </svg>
+            </button>
+            <div class="header-title">
+                <div class="srf-emblem">☸</div>
+                <h1 data-i18n="appTitle">Spiritual Diary</h1>
+                <p class="subtitle" data-i18n="subtitle">Paramahansa Yogananda</p>
+            </div>
+            <button id="settings-btn" class="header-btn" aria-label="Settings" title="Settings">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="3"/>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                </svg>
+            </button>
+        </header>
+
+        <main class="content">
+            <!-- Daily Diary Card -->
+            <section class="card diary-card">
+                <div class="card-header">
+                    <span class="card-icon">📖</span>
+                    <h2 data-i18n="dailyInspiration">Daily Inspiration</h2>
+                </div>
+                <div class="diary-date" id="diary-date"></div>
+                <div class="diary-theme" id="diary-theme"></div>
+                <blockquote class="diary-quote" id="diary-quote"></blockquote>
+                <div class="diary-attribution">
+                    — <span id="diary-author">Paramahansa Yogananda</span>
+                </div>
+                <a href="http://spiritualdiary.org/" target="_blank" rel="noopener" class="source-link">
+                    <span data-i18n="source">Source</span>: spiritualdiary.org
+                </a>
+            </section>
+
+            <!-- Meditation Timer Card -->
+            <section class="card timer-card">
+                <div class="card-header">
+                    <span class="card-icon">🧘</span>
+                    <h2 data-i18n="meditationTimer">Meditation Timer</h2>
+                </div>
+                <div class="timer-presets" id="timer-presets">
+                    <button class="preset-btn" data-minutes="10">10 <span data-i18n="minutes">min</span></button>
+                    <button class="preset-btn" data-minutes="15">15 <span data-i18n="minutes">min</span></button>
+                    <button class="preset-btn active" data-minutes="20">20 <span data-i18n="minutes">min</span></button>
+                    <button class="preset-btn" data-minutes="30">30 <span data-i18n="minutes">min</span></button>
+                    <button class="preset-btn" data-minutes="45">45 <span data-i18n="minutes">min</span></button>
+                    <button class="preset-btn" data-minutes="60">60 <span data-i18n="minutes">min</span></button>
+                </div>
+                <div class="timer-display" id="timer-display">20:00</div>
+                <div class="timer-status" id="timer-status" data-i18n="readyToBegin">Ready to begin</div>
+                <div class="timer-controls">
+                    <button class="control-btn" id="timer-start" data-i18n="start">Start</button>
+                    <button class="control-btn" id="timer-pause" style="display:none" data-i18n="pause">Pause</button>
+                    <button class="control-btn secondary" id="timer-reset" data-i18n="reset">Reset</button>
+                </div>
+            </section>
+
+            <!-- Where There is Light Card -->
+            <section class="card passages-card">
+                <div class="card-header">
+                    <span class="card-icon">✨</span>
+                    <h2 data-i18n="whereThereIsLight">Where There is Light</h2>
+                </div>
+                <p class="card-subtitle" data-i18n="randomPassages">Random Passages by Paramahansa Yogananda</p>
+                <div class="length-selector">
+                    <span class="length-label" data-i18n="passageLength">Passage Length:</span>
+                    <div class="radio-group">
+                        <label class="radio-label">
+                            <input type="radio" name="length" value="short">
+                            <span data-i18n="short">Short</span>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="length" value="medium" checked>
+                            <span data-i18n="medium">Medium</span>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="length" value="long">
+                            <span data-i18n="long">Long</span>
+                        </label>
+                    </div>
+                </div>
+                <button class="randomize-btn" id="randomize-btn">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="16 3 21 3 21 8"/>
+                        <line x1="4" y1="20" x2="21" y2="3"/>
+                        <polyline points="21 16 21 21 16 21"/>
+                        <line x1="15" y1="15" x2="21" y2="21"/>
+                        <line x1="4" y1="4" x2="9" y2="9"/>
+                    </svg>
+                    <span data-i18n="randomize">Randomize</span>
+                </button>
+            </section>
+        </main>
+    </div>
+
+    <!-- ========== PASSAGE VIEW ========== -->
+    <div id="passage-view" class="view">
+        <header class="passage-header">
+            <button id="passage-home" class="header-btn" aria-label="Home">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                    <polyline points="9 22 9 12 15 12 15 22"/>
+                </svg>
+            </button>
+            <h2 data-i18n="whereThereIsLight">Where There is Light</h2>
+            <div style="width:40px"></div>
+        </header>
+        <main class="passage-content">
+            <div class="passage-text" id="passage-text"></div>
+            <div class="passage-attribution">— Paramahansa Yogananda</div>
+            <div class="passage-actions">
+                <button class="action-btn" id="passage-repeat" title="Same passage again">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="17 1 21 5 17 9"/>
+                        <path d="M3 11V9a4 4 0 0 1 4-4h14"/>
+                        <polyline points="7 23 3 19 7 15"/>
+                        <path d="M21 13v2a4 4 0 0 1-4 4H3"/>
+                    </svg>
+                    <span data-i18n="repeat">Repeat</span>
+                </button>
+                <button class="action-btn" id="passage-copy" title="Copy to clipboard">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                    </svg>
+                    <span data-i18n="copy">Copy</span>
+                </button>
+                <button class="action-btn primary" id="passage-new">
+                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="16 3 21 3 21 8"/>
+                        <line x1="4" y1="20" x2="21" y2="3"/>
+                        <polyline points="21 16 21 21 16 21"/>
+                        <line x1="15" y1="15" x2="21" y2="21"/>
+                        <line x1="4" y1="4" x2="9" y2="9"/>
+                    </svg>
+                    <span data-i18n="randomize">Randomize</span>
+                </button>
+            </div>
+        </main>
+    </div>
+
+    <!-- ========== SETTINGS VIEW ========== -->
+    <div id="settings-view" class="view">
+        <header class="settings-header">
+            <button id="settings-back" class="header-btn" aria-label="Back">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="19" y1="12" x2="5" y2="12"/>
+                    <polyline points="12 19 5 12 12 5"/>
+                </svg>
+            </button>
+            <h2 data-i18n="settings">Settings</h2>
+            <div style="width:40px"></div>
+        </header>
+        <main class="settings-content">
+            <div class="settings-group">
+                <label class="settings-label" data-i18n="language">Language</label>
+                <div class="language-options">
+                    <button class="lang-btn active" data-lang="en">
+                        <span class="lang-flag">🇺🇸</span> English
+                    </button>
+                    <button class="lang-btn" data-lang="pt">
+                        <span class="lang-flag">🇧🇷</span> Português
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Toast notification -->
+    <div id="toast" class="toast" aria-live="polite"></div>
+
+    <script src="diary-data.js"></script>
+    <script src="passages-data.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
