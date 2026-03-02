@@ -326,9 +326,38 @@
     function getRandomPassage(length) {
         if (typeof PASSAGES_DATA === 'undefined') return null;
         
-        let filtered = PASSAGES_DATA.filter(p => p.length === length);
+        // Target word counts (50% bigger than original averages)
+        // Original: short ~24, medium ~57, long ~124
+        // New targets: short ~36, medium ~86, long ~186
+        const wordRanges = {
+            'short': { min: 25, max: 50 },      // was ~24, now ~36
+            'medium': { min: 50, max: 120 },    // was ~57, now ~86
+            'long': { min: 100, max: 999 }      // was ~124, now ~186+
+        };
         
-        // Fallback if no passages of that length
+        const range = wordRanges[length] || wordRanges['medium'];
+        let filtered = PASSAGES_DATA.filter(p => p.words >= range.min && p.words <= range.max);
+        
+        // For "long", also try combining passages if not enough big ones
+        if (length === 'long' && (filtered.length < 10 || Math.random() > 0.6)) {
+            const mediums = PASSAGES_DATA.filter(p => p.words >= 40 && p.words <= 80);
+            if (mediums.length >= 2) {
+                const idx1 = Math.floor(Math.random() * mediums.length);
+                let idx2 = Math.floor(Math.random() * mediums.length);
+                while (idx2 === idx1) idx2 = Math.floor(Math.random() * mediums.length);
+                
+                return {
+                    text: mediums[idx1].text + '\n\n' + mediums[idx2].text,
+                    length: 'long',
+                    words: mediums[idx1].words + mediums[idx2].words
+                };
+            }
+        }
+        
+        // Fallback: expand range if too few results
+        if (filtered.length < 5) {
+            filtered = PASSAGES_DATA.filter(p => p.words >= range.min * 0.7);
+        }
         if (filtered.length === 0) {
             filtered = PASSAGES_DATA;
         }
