@@ -337,10 +337,66 @@
         return filtered[idx];
     }
 
+    /**
+     * Clean up a passage to ensure it starts and ends with complete sentences.
+     * - If it starts mid-sentence (lowercase or no capital), trim to first sentence start
+     * - If it ends mid-sentence (no period/!/? at end), trim to last sentence end
+     */
+    function cleanupPassageText(text) {
+        if (!text) return text;
+        
+        let cleaned = text.trim();
+        
+        // Sentence-ending punctuation
+        const sentenceEnders = /[.!?]["']?\s*/;
+        const sentenceEndChars = /[.!?]["']?$/;
+        
+        // Check if starts mid-sentence (first char is lowercase, or doesn't look like sentence start)
+        // A proper sentence start: capital letter, quote+capital, or number
+        const startsWithSentence = /^["']?[A-Z0-9]/.test(cleaned);
+        
+        if (!startsWithSentence) {
+            // Find first sentence boundary (period/!/? followed by space and capital)
+            const match = cleaned.match(/[.!?]["']?\s+["']?[A-Z]/);
+            if (match) {
+                const idx = match.index + match[0].length - 1;
+                cleaned = cleaned.slice(idx).trim();
+            }
+        }
+        
+        // Check if ends with complete sentence
+        const endsWithSentence = sentenceEndChars.test(cleaned);
+        
+        if (!endsWithSentence) {
+            // Find last sentence-ending punctuation
+            let lastEnd = -1;
+            const endings = [...cleaned.matchAll(/[.!?]["']?/g)];
+            if (endings.length > 0) {
+                const lastMatch = endings[endings.length - 1];
+                lastEnd = lastMatch.index + lastMatch[0].length;
+            }
+            
+            if (lastEnd > 0) {
+                cleaned = cleaned.slice(0, lastEnd).trim();
+            }
+        }
+        
+        // If cleaning removed too much (less than 20 chars), return original
+        if (cleaned.length < 20) {
+            return text.trim();
+        }
+        
+        return cleaned;
+    }
+
     function showPassage(passage) {
         if (!passage) return;
-        currentPassage = passage;
-        document.getElementById('passage-text').textContent = passage.text;
+        // Create a cleaned version of the passage
+        currentPassage = {
+            ...passage,
+            text: cleanupPassageText(passage.text)
+        };
+        document.getElementById('passage-text').textContent = currentPassage.text;
         showView('passage-view');
     }
 
@@ -533,12 +589,16 @@
             const length = getSelectedLength();
             const passage = getRandomPassage(length);
             if (passage) {
-                currentPassage = passage;
+                // Clean up the passage text for complete sentences
+                currentPassage = {
+                    ...passage,
+                    text: cleanupPassageText(passage.text)
+                };
                 const el = document.getElementById('passage-text');
                 el.style.opacity = '0';
                 el.style.transition = 'opacity 0.3s';
                 setTimeout(() => {
-                    el.textContent = passage.text;
+                    el.textContent = currentPassage.text;
                     el.style.opacity = '1';
                 }, 200);
             }
