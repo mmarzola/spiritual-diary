@@ -115,8 +115,9 @@
         document.getElementById('diary-date').textContent = `${displayMonth} ${day}`;
 
         // Get diary entry from local data (updated daily via cron from spiritualdiary.org)
-        if (typeof DIARY_DATA !== 'undefined' && DIARY_DATA[monthName] && DIARY_DATA[monthName][day]) {
-            const entry = DIARY_DATA[monthName][day];
+        const dayStr = String(day);
+        if (typeof DIARY_DATA !== 'undefined' && DIARY_DATA[monthName] && DIARY_DATA[monthName][dayStr]) {
+            const entry = DIARY_DATA[monthName][dayStr];
             document.getElementById('diary-theme').textContent = entry.theme;
             document.getElementById('diary-quote').textContent = entry.quote;
             document.getElementById('diary-author').textContent = entry.author;
