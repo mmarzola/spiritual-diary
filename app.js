@@ -323,47 +323,64 @@
         return checked ? checked.value : 'medium';
     }
 
-    function getRandomPassage(length) {
-        if (typeof PASSAGES_DATA === 'undefined') return null;
+    // Count complete sentences in text
+    function countSentences(text) {
+        if (!text) return 0;
+        const matches = text.match(/[.!?]+["']?\s*/g);
+        return matches ? matches.length : 0;
+    }
+    
+    // Combine multiple passages to reach target sentence count
+    function combinePassages(targetSentences) {
+        let combined = '';
+        let totalSentences = 0;
+        const used = new Set();
         
-        // Target word counts (2x bigger than original averages)
-        // Original: short ~24, medium ~57, long ~124
-        // New targets: short ~54, medium ~130, long ~280+
-        const wordRanges = {
-            'short': { min: 40, max: 80 },      // ~54 words
-            'medium': { min: 80, max: 180 },    // ~130 words
-            'long': { min: 150, max: 999 }      // ~280+ words
-        };
-        
-        const range = wordRanges[length] || wordRanges['medium'];
-        let filtered = PASSAGES_DATA.filter(p => p.words >= range.min && p.words <= range.max);
-        
-        // For "long", also try combining passages if not enough big ones
-        if (length === 'long' && (filtered.length < 10 || Math.random() > 0.6)) {
-            const mediums = PASSAGES_DATA.filter(p => p.words >= 40 && p.words <= 80);
-            if (mediums.length >= 2) {
-                const idx1 = Math.floor(Math.random() * mediums.length);
-                let idx2 = Math.floor(Math.random() * mediums.length);
-                while (idx2 === idx1) idx2 = Math.floor(Math.random() * mediums.length);
-                
-                return {
-                    text: mediums[idx1].text + '\n\n' + mediums[idx2].text,
-                    length: 'long',
-                    words: mediums[idx1].words + mediums[idx2].words
-                };
+        while (totalSentences < targetSentences && used.size < PASSAGES_DATA.length) {
+            const idx = Math.floor(Math.random() * PASSAGES_DATA.length);
+            if (used.has(idx)) continue;
+            used.add(idx);
+            
+            const passage = PASSAGES_DATA[idx];
+            const cleaned = cleanupPassageText(passage.text);
+            const sentences = countSentences(cleaned);
+            
+            if (sentences > 0) {
+                if (combined) combined += '\n\n';
+                combined += cleaned;
+                totalSentences += sentences;
             }
         }
         
-        // Fallback: expand range if too few results
-        if (filtered.length < 5) {
-            filtered = PASSAGES_DATA.filter(p => p.words >= range.min * 0.7);
-        }
-        if (filtered.length === 0) {
-            filtered = PASSAGES_DATA;
+        return { text: combined, length: 'combined', words: combined.split(/\s+/).length };
+    }
+
+    function getRandomPassage(length) {
+        if (typeof PASSAGES_DATA === 'undefined') return null;
+        
+        // Target sentence counts
+        const sentenceTargets = {
+            'short': { min: 3, max: 5 },       // 3-5 sentences
+            'medium': { min: 5, max: 8 },      // 5-8 sentences
+            'long': { min: 8, max: 15 }        // 8-15 sentences
+        };
+        
+        const target = sentenceTargets[length] || sentenceTargets['medium'];
+        
+        // Try to find a single passage with enough sentences
+        const candidates = PASSAGES_DATA.map(p => ({
+            ...p,
+            cleanText: cleanupPassageText(p.text),
+            sentences: countSentences(cleanupPassageText(p.text))
+        })).filter(p => p.sentences >= target.min && p.sentences <= target.max * 1.5);
+        
+        if (candidates.length > 0) {
+            const idx = Math.floor(Math.random() * candidates.length);
+            return { ...candidates[idx], text: candidates[idx].cleanText };
         }
         
-        const idx = Math.floor(Math.random() * filtered.length);
-        return filtered[idx];
+        // If no single passage is big enough, combine multiple
+        return combinePassages(target.min + Math.floor(Math.random() * (target.max - target.min)));
     }
 
     /**
@@ -420,11 +437,8 @@
 
     function showPassage(passage) {
         if (!passage) return;
-        // Create a cleaned version of the passage
-        currentPassage = {
-            ...passage,
-            text: cleanupPassageText(passage.text)
-        };
+        // Text is already cleaned by getRandomPassage
+        currentPassage = passage;
         document.getElementById('passage-text').textContent = currentPassage.text;
         showView('passage-view');
     }
@@ -618,11 +632,8 @@
             const length = getSelectedLength();
             const passage = getRandomPassage(length);
             if (passage) {
-                // Clean up the passage text for complete sentences
-                currentPassage = {
-                    ...passage,
-                    text: cleanupPassageText(passage.text)
-                };
+                // Text is already cleaned by getRandomPassage
+                currentPassage = passage;
                 const el = document.getElementById('passage-text');
                 el.style.opacity = '0';
                 el.style.transition = 'opacity 0.3s';
