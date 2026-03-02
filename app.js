@@ -326,13 +326,13 @@
     function getRandomPassage(length) {
         if (typeof PASSAGES_DATA === 'undefined') return null;
         
-        // Target word counts (50% bigger than original averages)
+        // Target word counts (2x bigger than original averages)
         // Original: short ~24, medium ~57, long ~124
-        // New targets: short ~36, medium ~86, long ~186
+        // New targets: short ~54, medium ~130, long ~280+
         const wordRanges = {
-            'short': { min: 25, max: 50 },      // was ~24, now ~36
-            'medium': { min: 50, max: 120 },    // was ~57, now ~86
-            'long': { min: 100, max: 999 }      // was ~124, now ~186+
+            'short': { min: 40, max: 80 },      // ~54 words
+            'medium': { min: 80, max: 180 },    // ~130 words
+            'long': { min: 150, max: 999 }      // ~280+ words
         };
         
         const range = wordRanges[length] || wordRanges['medium'];
