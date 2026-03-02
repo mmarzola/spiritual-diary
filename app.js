@@ -114,30 +114,7 @@
 
         document.getElementById('diary-date').textContent = `${displayMonth} ${day}`;
 
-        // Try to fetch from spiritualdiary.org first (official source)
-        const monthKey = `m_${monthIndex + 1}`;
-        const dayKey = `d_${day}`;
-        
-        fetch('https://spiritualdiary.org/assets/json/sd.json')
-            .then(response => response.json())
-            .then(data => {
-                if (data[monthKey] && data[monthKey][dayKey]) {
-                    const entry = data[monthKey][dayKey];
-                    document.getElementById('diary-theme').textContent = entry.topic;
-                    document.getElementById('diary-quote').textContent = entry.quote;
-                    document.getElementById('diary-author').textContent = entry.author;
-                    return;
-                }
-                // Fall back to local data
-                fallbackToLocalDiary(monthName, day);
-            })
-            .catch(() => {
-                // Fall back to local data on error
-                fallbackToLocalDiary(monthName, day);
-            });
-    }
-    
-    function fallbackToLocalDiary(monthName, day) {
+        // Get diary entry from local data (updated daily via cron from spiritualdiary.org)
         if (typeof DIARY_DATA !== 'undefined' && DIARY_DATA[monthName] && DIARY_DATA[monthName][day]) {
             const entry = DIARY_DATA[monthName][day];
             document.getElementById('diary-theme').textContent = entry.theme;
